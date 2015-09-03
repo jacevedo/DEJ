@@ -8,6 +8,9 @@ package excepciones;
 /**
  *
  * @author jaime
+ * 
+ * Excepcion customizada en el caso que haya error en el metodo
+ * de agregar
  */
 public class NoAgregoException extends Exception
 {

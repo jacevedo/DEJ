@@ -8,6 +8,9 @@ package entidades;
 /**
  *
  * @author jaime
+ * 
+ * Clase Comanda entidad identica a la tabla de la base de datos
+ * se utilizará para manejar los datos de la misma
  */
 public class Comanda {
     
