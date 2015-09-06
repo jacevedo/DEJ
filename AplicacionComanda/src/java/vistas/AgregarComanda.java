@@ -5,13 +5,22 @@
  */
 package vistas;
 
+import controladoras.ControladoraComanda;
+import entidades.Comanda;
+import excepciones.NoAgregoException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  *
@@ -20,69 +29,42 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "AgregarComanda", urlPatterns = {"/AgregarComanda"})
 public class AgregarComanda extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AgregarComanda</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AgregarComanda at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+    @Resource(mappedName = "jdbc/comanda")
+    private DataSource ds;
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+         request.getRequestDispatcher("/agregarComanda.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        int idCocina = Integer.parseInt(request.getParameter("idCocina"));
+        String pedido = request.getParameter("pedido");
+        int mesa = Integer.parseInt(request.getParameter("mesa"));
+        
+        Comanda comanda = new Comanda(0,idCocina, pedido, mesa);
+        try (Connection conexion = ds.getConnection())
+        {
+            ControladoraComanda controladora = new ControladoraComanda(conexion);
+            controladora.agregar(comanda);
+            request.setAttribute("mensaje", "Agregado Correctamente");
+        } 
+        catch (NoAgregoException ex)
+        {
+            Logger.getLogger(AgregarComanda.class.getName()).log(Level.SEVERE, null, ex);
+            request.setAttribute("mensaje", "Error al agregar");
+        }
+        catch (SQLException ex) 
+        {
+            Logger.getLogger(AgregarComanda.class.getName()).log(Level.SEVERE, null, ex);
+            request.setAttribute("mensaje", "Error al agregar");
+        } 
+        request.getRequestDispatcher("agregarComanda.jsp").forward(request, response);
+        
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
