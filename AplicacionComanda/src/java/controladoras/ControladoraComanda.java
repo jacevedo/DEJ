@@ -89,7 +89,7 @@ public class ControladoraComanda
             stmt.setInt(3, comanda.getMesa());
             stmt.setInt(4, comanda.getId());
             //Ejecuta la sentencia sql
-            stmt.executeQuery();
+            stmt.executeUpdate();
         } 
         catch (SQLException ex) 
         {
