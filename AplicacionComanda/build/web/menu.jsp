@@ -5,5 +5,5 @@
         <a href="<c:url value="/AgregarComanda"/>">Agregar Comanda</a> | 
         <a href="<c:url value="/EditarComanda"/>">Editar Comanda </a> |
         <a href="buscarComanda.jsp">Buscar Comanda </a> |
-        <a href="listarComanda.jsp">Listar Comanda </a>
+        <a href="<c:url value="/ListarComanda"/>">Listar Comanda </a>
         
